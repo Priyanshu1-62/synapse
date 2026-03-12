@@ -2,7 +2,7 @@ import type { GraphNode, GraphEdge, PathResult } from '../types/index.js';
 
 type AdjacencyMap = Map<string, Array<{ nodeId: string; edgeId: string; weight: number }>>;
 
-function buildAdjacency(nodes: GraphNode[], edges: GraphEdge[]): AdjacencyMap {
+export function buildAdjacency(nodes: GraphNode[], edges: GraphEdge[]): AdjacencyMap {
   const adj: AdjacencyMap = new Map();
   for (const node of nodes) adj.set(node.id, []);
 
