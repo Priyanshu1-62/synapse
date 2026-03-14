@@ -12,7 +12,7 @@ export function createNode(nodeId: string): GraphNode {
     return node;
 }
 
-export function createEdge(edgeId: string, source: string, target: string, weight: number, bidirectional: boolean): GraphEdge {
+export function createEdge(edgeId: string, source: string, target: string, bidirectional: boolean, weight: number = 1): GraphEdge {
     const edge: GraphEdge = {
         id: edgeId,
         type: "custom", 
