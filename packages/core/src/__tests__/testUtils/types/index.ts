@@ -13,5 +13,5 @@ export interface GraphShortestPathFixtureBody {
     edges: GraphEdge[];
     sourceId: string;
     targetId: string;
-    expectedPath: PathResult;
+    expectedPath: PathResult | null;
 }

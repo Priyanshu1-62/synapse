@@ -1,7 +1,7 @@
 import { createNode, createEdge } from "../factories/index";
-import type { AdjacencyFixtureBody, GraphShortestPathFixtureBody } from "../types";
+import type { AdjacencyFixtureBody } from "../types";
 
-export const adjacency: Record<string, AdjacencyFixtureBody> = {
+export const adjacency = {
     general: {
         nodes: [
             createNode("n1"),
@@ -145,39 +145,4 @@ export const adjacency: Record<string, AdjacencyFixtureBody> = {
             ]],
         ])
     }
-};
-
-export const graphShortestPath: Record<string, GraphShortestPathFixtureBody> = {
-    general: {
-        nodes: [
-            createNode("n1"),
-            createNode("n2"),
-            createNode("n3"),
-            createNode("n4"),
-        ],
-        edges: [
-            createEdge("e1", "n1", "n2", false),
-            createEdge("e2", "n2", "n3", false),
-            createEdge("e3", "n3", "n1", false),
-            createEdge("e4", "n3", "n4", false),
-        ],
-        sourceId: "n1",
-        targetId: "n3",
-        expectedPath: {
-            path: ["n1", "n2", "n3"],
-            distance: 2
-        }
-    },
-    singleNode: {
-        nodes: [
-            createNode("n1"),
-        ],
-        edges: [],
-        sourceId: "n1",
-        targetId: "n1",
-        expectedPath: {
-            path: ["n1"],
-            distance: 0
-        }
-    },
-};
+} satisfies Record<string, AdjacencyFixtureBody>;;
