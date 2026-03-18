@@ -13,5 +13,28 @@ export interface GraphShortestPathFixtureBody {
     edges: GraphEdge[];
     sourceId: string;
     targetId: string;
-    expectedPath: PathResult | null;
+    shortestPaths: PathResult[];
+}
+
+export interface AllPathsFixtureBody {
+    nodes: GraphNode[];
+    edges: GraphEdge[];
+    sourceId: string;
+    targetId: string;
+    maxPaths: Number;
+    maxDepth: Number;
+    expectedPaths: PathResult[];
+}
+
+export interface ReachableNodesFixtureBody {
+    nodes: GraphNode[];
+    edges:GraphEdge[];
+    sourceId: string;
+    expectedNodes: string[];
+}
+
+export interface CentralityFixtureBody {
+    nodes: GraphNode[];
+    edges: GraphEdge[];
+    expectedResult: Map<string, number>;
 }

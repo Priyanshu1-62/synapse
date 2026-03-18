@@ -17,10 +17,9 @@ export const bfsShortestPath = {
         ],
         sourceId: "n1",
         targetId: "n3",
-        expectedPath: {
-            path: ["n1", "n2", "n3"],
-            distance: 2
-        }
+        shortestPaths: [
+            {path: ["n1", "n2", "n3"], distance: 2}
+        ]
     },
     singleNode: {
         nodes: [
@@ -29,10 +28,34 @@ export const bfsShortestPath = {
         edges: [],
         sourceId: "n1",
         targetId: "n1",
-        expectedPath: {
-            path: ["n1"],
-            distance: 0
-        }
+        shortestPaths: [
+            {path: ["n1"], distance: 0}
+        ]
+    },
+    noEdges: {
+        nodes: [
+            createNode("n1"),
+            createNode("n2"),
+        ],
+        edges: [],
+        sourceId: "n1",
+        targetId: "n2",
+        shortestPaths: []
+    },
+    selfLoop: {
+        nodes: [
+            createNode("n1"),
+            createNode("n2"),
+        ],
+        edges: [
+            createEdge("e1", "n1", "n1", false, 0.5),
+            createEdge("e2", "n1", "n2", false, 0.5),
+        ],
+        sourceId: "n1",
+        targetId: "n2",
+        shortestPaths: [
+            {path: ["n1", "n2"], distance: 1}
+        ]
     },
     treePattern: {
         nodes: [
@@ -50,10 +73,9 @@ export const bfsShortestPath = {
         ],
         sourceId: "n1",
         targetId: "n4",
-        expectedPath: {
-            path: ["n1", "n2", "n3", "n4"],
-            distance: 3
-        }
+        shortestPaths: [
+            {path: ["n1", "n2", "n3", "n4"], distance: 3}
+        ]
     },
     multiplePaths: {
         nodes: [
@@ -73,10 +95,33 @@ export const bfsShortestPath = {
         ],
         sourceId: "n1",
         targetId: "n4",
-        expectedPath: {
-            path: ["n1", "n5", "n4"],
-            distance: 2
-        }
+        shortestPaths: [
+            {path: ["n1", "n5", "n4"], distance: 2},
+        ]
+    },
+    multipleShortestPaths: {
+        nodes: [
+            createNode("n1"),
+            createNode("n2"),
+            createNode("n3"),
+            createNode("n4"),
+            createNode("n5"),
+        ],
+        edges: [
+            createEdge("e1", "n1", "n2", false, 1.0),
+            createEdge("e2", "n2", "n3", false, 0.6),
+            createEdge("e3", "n3", "n4", false, 0.2),
+            createEdge("e4", "n1", "n5", false, 0.5),
+            createEdge("e5", "n5", "n4", false, 0.8),
+            createEdge("e6", "n5", "n2", false, 0.0),
+            createEdge("e7", "n1", "n3", false, 0.0),
+        ],
+        sourceId: "n1",
+        targetId: "n4",
+        shortestPaths: [
+            {path: ["n1", "n5", "n4"], distance: 2},
+            {path: ["n1", "n3", "n4"], distance: 2},
+        ]
     },
     cyclicGraph: {
         nodes: [
@@ -94,10 +139,9 @@ export const bfsShortestPath = {
         ],
         sourceId: "n1",
         targetId: "n4",
-        expectedPath: {
-            path: ["n1", "n2", "n3", "n4"],
-            distance: 3
-        }
+        shortestPaths: [
+            {path: ["n1", "n2", "n3", "n4"], distance: 3}
+        ]
     },
     noPath: {
         nodes: [
@@ -107,15 +151,15 @@ export const bfsShortestPath = {
             createNode("n4"),
         ],
         edges: [
-            createEdge("e1", "n1", "n2", false, 0.5),
-            createEdge("e2", "n2", "n3", false, 0.6),
-            createEdge("e3", "n3", "n1", false, 0.7),
-            createEdge("e4", "n4", "n3", false, 0.8),
-            createEdge("e5", "n4", "n2", false, 0.9),
+            createEdge("e1", "n1", "n2", false),
+            createEdge("e2", "n2", "n3", false),
+            createEdge("e3", "n3", "n1", false),
+            createEdge("e4", "n4", "n3", false),
+            createEdge("e5", "n4", "n2", false),
         ],
         sourceId: "n1",
         targetId: "n4",
-        expectedPath: null
+        shortestPaths: []
     },
     disconnectedComponents: {
         nodes: [
@@ -124,11 +168,11 @@ export const bfsShortestPath = {
             createNode("n3"),
         ],
         edges: [
-            createEdge("e1", "n1", "n2", false, 0.5),
+            createEdge("e1", "n1", "n2", false),
         ],
         sourceId: "n1",
         targetId: "n3",
-        expectedPath: null
+        shortestPaths: []
     },
     missingTarget: {
         nodes: [
@@ -137,12 +181,12 @@ export const bfsShortestPath = {
             createNode("n3"),
         ],
         edges: [
-            createEdge("e1", "n1", "n2", false, 0.5),
-            createEdge("e2", "n1", "n3", false, 0.5),
+            createEdge("e1", "n1", "n2", false),
+            createEdge("e2", "n1", "n3", false),
         ],
         sourceId: "n1",
         targetId: "n4",
-        expectedPath: null
+        shortestPaths: []
     },
     unknownSource: {
         nodes: [
@@ -151,12 +195,12 @@ export const bfsShortestPath = {
             createNode("n3"),
         ],
         edges: [
-            createEdge("e1", "n1", "n2", false, 0.5),
-            createEdge("e2", "n1", "n3", false, 0.5),
+            createEdge("e1", "n1", "n2", false),
+            createEdge("e2", "n1", "n3", false),
         ],
         sourceId: "n4",
         targetId: "n1",
-        expectedPath: null
+        shortestPaths: []
     },
     bidirectionalEdges: {
         nodes: [
@@ -166,17 +210,16 @@ export const bfsShortestPath = {
             createNode("n4"),
         ],
         edges: [
-            createEdge("e1", "n1", "n2", false, 0.5),
-            createEdge("e2", "n2", "n3", false, 0.6),
-            createEdge("e3", "n3", "n1", true, 0.7),
-            createEdge("e4", "n3", "n4", false, 0.8),
+            createEdge("e1", "n1", "n2", false),
+            createEdge("e2", "n2", "n3", false),
+            createEdge("e3", "n3", "n1", true),
+            createEdge("e4", "n3", "n4", false),
         ],
         sourceId: "n1",
         targetId: "n4",
-        expectedPath: {
-            path: ["n1", "n3", "n4"],
-            distance: 2
-        }
+        shortestPaths: [
+            {path: ["n1", "n3", "n4"],distance: 2}
+        ]
     },
     duplicateEdges: {
         nodes: [
@@ -186,18 +229,17 @@ export const bfsShortestPath = {
             createNode("n4"),
         ],
         edges: [
-            createEdge("e1", "n1", "n2", false, 0.5),
-            createEdge("e2", "n2", "n3", false, 0.6),
-            createEdge("e3", "n3", "n1", true, 0.7),
-            createEdge("e3", "n3", "n1", true, 0.7),
-            createEdge("e4", "n3", "n4", false, 0.8),
+            createEdge("e1", "n1", "n2", false),
+            createEdge("e2", "n2", "n3", false),
+            createEdge("e3", "n3", "n1", true),
+            createEdge("e3", "n3", "n1", true),
+            createEdge("e4", "n3", "n4", false),
         ],
         sourceId: "n1",
         targetId: "n4",
-        expectedPath: {
-            path: ["n1", "n3", "n4"],
-            distance: 2
-        }
+        shortestPaths: [
+            {path: ["n1", "n3", "n4"],distance: 2}
+        ]
     },
     wideBranchingGraph: {
         nodes: [
@@ -212,21 +254,20 @@ export const bfsShortestPath = {
             createNode("n9"),
         ],
         edges: [
-            createEdge("e1", "n1", "n2", true, 0.5),
-            createEdge("e2", "n1", "n3", true, 0.6),
-            createEdge("e3", "n1", "n4", true, 0.7),
-            createEdge("e4", "n1", "n5", true, 0.8),
-            createEdge("e5", "n1", "n6", true, 0.8),
-            createEdge("e6", "n1", "n7", true, 0.8),
-            createEdge("e7", "n5", "n8", true, 0.8),
-            createEdge("e8", "n5", "n9", true, 0.8),
+            createEdge("e1", "n1", "n2", true),
+            createEdge("e2", "n1", "n3", true),
+            createEdge("e3", "n1", "n4", true),
+            createEdge("e4", "n1", "n5", true),
+            createEdge("e5", "n1", "n6", true),
+            createEdge("e6", "n1", "n7", true),
+            createEdge("e7", "n5", "n8", true),
+            createEdge("e8", "n5", "n9", true),
 
         ],
         sourceId: "n1",
         targetId: "n9",
-        expectedPath: {
-            path: ["n1", "n5", "n9"],
-            distance: 2
-        }
+        shortestPaths: [
+            {path: ["n1", "n5", "n9"],distance: 2}
+        ]
     }
 } satisfies Record<string, GraphShortestPathFixtureBody>;

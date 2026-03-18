@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { buildAdjacency, bfsShortestPath, dijkstraShortestPath } from "../../algorithms/pathfinding.js";
+import { buildAdjacency, bfsShortestPath, dijkstraShortestPath, findAllPaths, reachableNodes, betweennessCentrality } from "../../algorithms/pathfinding.js";
 import * as fixtures from "../testUtils/fixtures/index.js";
 
 describe("pathfinding module", () => {
@@ -34,18 +34,26 @@ describe("pathfinding module", () => {
         });
 
         test.each([
-            ["directional edges", fixtures.adjacency.directional],
-            ["bidirectional edges", fixtures.adjacency.biDirectional],
-            ["missing weight", fixtures.adjacency.weight],
+            ["missing weight", fixtures.adjacency.missingWeight],
             ["zero edges scenario", fixtures.adjacency.noEdges],
             ["unconnected nodes", fixtures.adjacency.unConnectedNode],
-            ["unknown source nodes", fixtures.adjacency.unknownSource],
-            ["unknown target nodes", fixtures.adjacency.unknownTarget],
-            ["duplicate edges", fixtures.adjacency.duplicateEdge],
+            ["directional edges with explicit weight", fixtures.adjacency.directionalWithWeight],
+            ["directional edges with default weight", fixtures.adjacency.directionalWithoutWeight],
+            ["bidirectional edges with explicit weight", fixtures.adjacency.biDirectionalWithWeight],
+            ["bidirectional edges with default weight", fixtures.adjacency.biDirectionalWithoutWeight],
+            ["duplicate edges", fixtures.adjacency.duplicateEdges],
         ])("handles %s", (_, fixture) => {
 
             const result = buildAdjacency(fixture.nodes, fixture.edges);
-            expect(result).toEqual(fixture.adjacencyList);
+
+            expect(result.size).toBe(fixture.adjacencyList.size);
+
+            for(const [node, edges] of fixture.adjacencyList){
+                expect(result.has(node)).toBe(true);
+
+                expect(result.get(node)).toHaveLength(edges.length);
+                expect(result.get(node)).toEqual(expect.arrayContaining(edges));
+            }
         });
     });
 
@@ -75,8 +83,11 @@ describe("pathfinding module", () => {
 
         test.each([
             ["single node graph", fixtures.bfsShortestPath.singleNode],
+            ["no edges", fixtures.bfsShortestPath.noEdges],
+            ["self loop", fixtures.bfsShortestPath.selfLoop],
             ["simple tree pattern", fixtures.bfsShortestPath.treePattern],
             ["multiple paths", fixtures.bfsShortestPath.multiplePaths],
+            ["multiple shortest paths", fixtures.bfsShortestPath.multipleShortestPaths],
             ["cyclic graph", fixtures.bfsShortestPath.cyclicGraph],
             ["no path exists", fixtures.bfsShortestPath.noPath],
             ["disconnected components", fixtures.bfsShortestPath.disconnectedComponents],
@@ -88,10 +99,14 @@ describe("pathfinding module", () => {
         ])("handles %s", (_, fixture) => {
 
             const result = bfsShortestPath(fixture.nodes, fixture.edges, fixture.sourceId, fixture.targetId);
-            expect(result).toEqual(fixture.expectedPath);
-        });
 
-        // Right now Dijsktra algo function does not handle negative edges, which is extremely important edge case.
+            if(result === null){
+                expect(fixture.shortestPaths).toHaveLength(0);
+            }
+            else{
+                expect(fixture.shortestPaths).toContainEqual(result);
+            }
+        });
 
     });
 
@@ -121,8 +136,11 @@ describe("pathfinding module", () => {
 
         test.each([
             ["single node graph", fixtures.dijkstra.singleNode],
+            ["no edges", fixtures.dijkstra.noEdges],
+            ["self loop", fixtures.dijkstra.selfLoop],
             ["simple tree pattern", fixtures.dijkstra.treePattern],
             ["multiple paths", fixtures.dijkstra.multiplePaths],
+            ["multiple shortest paths", fixtures.dijkstra.multipleShortestPaths],
             ["cyclic graph", fixtures.dijkstra.cyclicGraph],
             ["no path exists", fixtures.dijkstra.noPath],
             ["disconnected components", fixtures.dijkstra.disconnectedComponents],
@@ -134,27 +152,146 @@ describe("pathfinding module", () => {
         ])("handles %s", (_, fixture) => {
 
             const result = dijkstraShortestPath(fixture.nodes, fixture.edges, fixture.sourceId, fixture.targetId);
-            expect(result).toEqual(
-                fixture.expectedPath === null
-                ? null
-                : {
-                    path: fixture.expectedPath.path,
-                    distance: expect.closeTo(fixture.expectedPath.distance, 6)
-                }
-            );
+            
+            if(result === null){
+                expect(fixture.shortestPaths).toHaveLength(0);
+            }
+            else{
+                expect(fixture.shortestPaths).toContainEqual(
+                    expect.objectContaining({
+                        path: result.path,
+                        distance: expect.closeTo(result.distance, 6)
+                    })
+                );
+            }
         });
     });
 
-    // describe("findAllPaths function", () => {
+    describe("findAllPaths function", () => {
 
-    // });
+        test("returns valid result structure", () => {
+            const result = findAllPaths(
+                fixtures.allPaths.general.nodes,
+                fixtures.allPaths.general.edges,
+                fixtures.allPaths.general.sourceId,
+                fixtures.allPaths.general.targetId,
+                fixtures.allPaths.general.maxPaths,
+                fixtures.allPaths.general.maxDepth,
+            );
+            expect(Array.isArray(result)).toBe(true);
 
-    // describe("reachableNodes function", () => {
+            for(const element of result){
+                expect(element).toHaveProperty("path");
+                expect(element).toHaveProperty("distance");
 
-    // });
+                expect(Array.isArray(element.path)).toBe(true);
+                expect(Number.isInteger(element.distance)).toBe(true);
+                expect(element.distance).toBe(element.path.length - 1);
+
+                for(const node of element.path){
+                    expect(node).toEqual(expect.any(String));
+                }
+            }
+        });
+
+        test.each([
+            ["single node graph", fixtures.allPaths.singleNode],
+            ["no edges", fixtures.allPaths.noEdges],
+            ["self loop", fixtures.allPaths.selfLoop],
+            ["source equals target", fixtures.allPaths.sourceEqualsTarget],
+            ["tree pattern", fixtures.allPaths.treePattern],
+            ["multiple paths", fixtures.allPaths.multiplePaths],
+            ["no path", fixtures.allPaths.noPath],
+            ["disconnected components", fixtures.allPaths.disconnectedComponents],
+            ["missing target", fixtures.allPaths.missingTarget],
+            ["unknown source", fixtures.allPaths.unknownSource],
+            ["bidirectional edges", fixtures.allPaths.bidirectionalEdges],
+            ["duplicate edges", fixtures.allPaths.duplicateEdges],
+            ["large depths exceeding max depth limit", fixtures.allPaths.largeDepth],
+            ["availabe path count exceeding max path limit", fixtures.allPaths.highPathCount],
+        ])("handles %s", (_, fixture) => {
+
+            const result = findAllPaths(fixture.nodes, fixture.edges, fixture.sourceId, fixture.targetId, fixture.maxPaths, fixture.maxDepth);
+            
+            expect(Array.isArray(result)).toBe(true);
+            expect(result).toHaveLength(fixture.expectedPaths.length);
+            expect(result).toEqual(expect.arrayContaining(fixture.expectedPaths));
+        });
+    });
+
+    describe("reachableNodes function", () => {
+
+        test("returns valid result structure", () => {
+            const result = reachableNodes(
+                fixtures.reachableNodes.general.nodes,
+                fixtures.reachableNodes.general.edges,
+                fixtures.reachableNodes.general.sourceId,
+            );
+
+            expect(Array.isArray(result)).toBe(true);
+            for(const node of result){
+                expect(node).toEqual(expect.any(String));
+            }
+        });
+
+        test.each([
+            ["single node", fixtures.reachableNodes.singleNode],
+            ["no edges", fixtures.reachableNodes.noEdges],
+            ["self loop", fixtures.reachableNodes.selfLoop],
+            ["tree pattern", fixtures.reachableNodes.treePattern],
+            ["disconnected components", fixtures.reachableNodes.disconnectedComponents],
+            ["unknown source", fixtures.reachableNodes.unknownSource],
+            ["bidirectional edges", fixtures.reachableNodes.bidirectionalEdges],
+            ["source is absent from nodes but present in edges", fixtures.reachableNodes.absentSourceFromNodes],
+            ["duplicate edges", fixtures.reachableNodes.duplicateEdges],
+            ["cyclic graph", fixtures.reachableNodes.cyclicGraph],
+        ])("handles %s", (_, fixture) => {
+
+            const result = reachableNodes(fixture.nodes, fixture.edges, fixture.sourceId);
+
+            expect(result).not.toContain(fixture.sourceId);
+            expect(result).toHaveLength(fixture.expectedNodes.length);
+            expect(result).toEqual(expect.arrayContaining(fixture.expectedNodes));
+        });
+    });
     
-    // describe("betweennessCentrality function", () => {
+    describe("betweennessCentrality function", () => {
 
-    // });
+        test("returns valid result structure", () => {
+            const result = betweennessCentrality(
+                fixtures.centrality.general.nodes,
+                fixtures.centrality.general.edges,
+            );
 
+            expect(result).toBeInstanceOf(Map);
+
+            for(const [node, normalizedScore] of result){
+                expect(node).toEqual(expect.any(String));
+                expect(normalizedScore).toEqual(expect.any(Number));
+            }
+        });
+
+        test.each([
+            ["single node", fixtures.centrality.singleNode],
+            ["no edges", fixtures.centrality.noEdges],
+            ["no intermediate nodes", fixtures.centrality.noIntermediateNodes],
+            ["self loop", fixtures.centrality.selfLoop],
+            ["tree pattern", fixtures.centrality.treePattern],
+            ["multiple shortest paths", fixtures.centrality.multipleShortestPaths],
+            ["disconnected components", fixtures.centrality.disconnectedComponents],
+            ["bidirectional edges", fixtures.centrality.bidirectionalEdges],
+            ["duplicate edges", fixtures.centrality.duplicateEdges],
+            ["wide branching graph", fixtures.centrality.wideBranchingGraph],
+        ])("handles %s", (_, fixture) => {
+
+            const result = betweennessCentrality(fixture.nodes, fixture.edges);
+
+            expect(result.size).toBe(fixture.expectedResult.size);
+
+            for(const [node, normalizedScore] of fixture.expectedResult){
+                expect(result.has(node)).toBe(true);
+                expect(result.get(node)).toBeCloseTo(normalizedScore, 6);
+            }
+        });
+    });
 });

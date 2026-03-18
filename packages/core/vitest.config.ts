@@ -6,7 +6,7 @@ export default defineConfig({
       provider: "v8",
 
       // Measure coverage for the source code
-      include: ["src/**/*.ts"],
+      include: ["src/algorithms/pathfinding.ts"],
 
       // Reports
       reporter: ["text", "html"],

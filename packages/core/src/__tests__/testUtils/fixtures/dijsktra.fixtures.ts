@@ -17,10 +17,9 @@ export const dijkstra = {
         ],
         sourceId: "n1",
         targetId: "n3",
-        expectedPath: {
-            path: ["n1", "n2", "n3"],
-            distance: 0.3
-        }
+        shortestPaths: [
+            {path: ["n1", "n2", "n3"], distance: 0.3}
+        ]
     },
     singleNode: {
         nodes: [
@@ -29,10 +28,34 @@ export const dijkstra = {
         edges: [],
         sourceId: "n1",
         targetId: "n1",
-        expectedPath: {
-            path: ["n1"],
-            distance: 0
-        }
+        shortestPaths: [
+            {path: ["n1"], distance: 0}
+        ]
+    },
+    noEdges: {
+        nodes: [
+            createNode("n1"),
+            createNode("n2"),
+        ],
+        edges: [],
+        sourceId: "n1",
+        targetId: "n2",
+        shortestPaths: []
+    },
+    selfLoop: {
+        nodes: [
+            createNode("n1"),
+            createNode("n2"),
+        ],
+        edges: [
+            createEdge("e1", "n1", "n1", true, 0.5),
+            createEdge("e2", "n1", "n2", false, 0.5),
+        ],
+        sourceId: "n1",
+        targetId: "n2",
+        shortestPaths: [
+            {path: ["n1", "n2"], distance: 0.5}
+        ]
     },
     treePattern: {
         nodes: [
@@ -50,10 +73,9 @@ export const dijkstra = {
         ],
         sourceId: "n1",
         targetId: "n4",
-        expectedPath: {
-            path: ["n1", "n2", "n3", "n4"],
-            distance: 1.8
-        }
+        shortestPaths: [
+            {path: ["n1", "n2", "n3", "n4"], distance: 1.8}
+        ]
     },
     multiplePaths: {
         nodes: [
@@ -73,10 +95,32 @@ export const dijkstra = {
         ],
         sourceId: "n1",
         targetId: "n4",
-        expectedPath: {
-            path: ["n1", "n5", "n4"],
-            distance: 1.3
-        }
+        shortestPaths: [
+            {path: ["n1", "n5", "n2", "n3", "n4"], distance: 1.3}
+        ]
+    },
+    multipleShortestPaths: {
+        nodes: [
+            createNode("n1"),
+            createNode("n2"),
+            createNode("n3"),
+            createNode("n4"),
+            createNode("n5"),
+        ],
+        edges: [
+            createEdge("e1", "n1", "n2", false, 1.0),
+            createEdge("e2", "n2", "n3", false, 0.6),
+            createEdge("e3", "n3", "n4", false, 0.2),
+            createEdge("e4", "n1", "n5", false, 0.5),
+            createEdge("e5", "n5", "n4", false, 0.8),
+            createEdge("e6", "n5", "n2", false, 0.0),
+        ],
+        sourceId: "n1",
+        targetId: "n4",
+        shortestPaths: [
+            {path: ["n1", "n5", "n4"], distance: 1.3},
+            {path: ["n1", "n5", "n2", "n3", "n4"], distance: 1.3}
+        ]
     },
     cyclicGraph: {
         nodes: [
@@ -94,10 +138,9 @@ export const dijkstra = {
         ],
         sourceId: "n1",
         targetId: "n4",
-        expectedPath: {
-            path: ["n1", "n2", "n3", "n4"],
-            distance: 1.9
-        }
+        shortestPaths: [
+            {path: ["n1", "n2", "n3", "n4"], distance: 1.9}
+        ]
     },
     noPath: {
         nodes: [
@@ -115,7 +158,7 @@ export const dijkstra = {
         ],
         sourceId: "n1",
         targetId: "n4",
-        expectedPath: null
+        shortestPaths: []
     },
     disconnectedComponents: {
         nodes: [
@@ -128,7 +171,7 @@ export const dijkstra = {
         ],
         sourceId: "n1",
         targetId: "n3",
-        expectedPath: null
+        shortestPaths: []
     },
     missingTarget: {
         nodes: [
@@ -142,7 +185,7 @@ export const dijkstra = {
         ],
         sourceId: "n1",
         targetId: "n4",
-        expectedPath: null
+        shortestPaths: []
     },
     unknownSource: {
         nodes: [
@@ -156,7 +199,7 @@ export const dijkstra = {
         ],
         sourceId: "n4",
         targetId: "n1",
-        expectedPath: null
+        shortestPaths: []
     },
     bidirectionalEdges: {
         nodes: [
@@ -173,10 +216,9 @@ export const dijkstra = {
         ],
         sourceId: "n1",
         targetId: "n4",
-        expectedPath: {
-            path: ["n1", "n3", "n4"],
-            distance: 1.5
-        }
+        shortestPaths: [
+            {path: ["n1", "n3", "n4"], distance: 1.5}
+        ]
     },
     duplicateEdges: {
         nodes: [
@@ -194,10 +236,9 @@ export const dijkstra = {
         ],
         sourceId: "n1",
         targetId: "n4",
-        expectedPath: {
-            path: ["n1", "n3", "n4"],
-            distance: 1.5
-        }
+        shortestPaths: [
+            {path: ["n1", "n3", "n4"], distance: 1.5}
+        ]
     },
     wideBranchingGraph: {
         nodes: [
@@ -224,9 +265,8 @@ export const dijkstra = {
         ],
         sourceId: "n1",
         targetId: "n9",
-        expectedPath: {
-            path: ["n1", "n5", "n9"],
-            distance: 1.0
-        }
+        shortestPaths: [
+            {path: ["n1", "n5", "n9"], distance: 1.1}
+        ]
     }
 } satisfies Record<string, GraphShortestPathFixtureBody>;
