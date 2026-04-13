@@ -1,5 +1,5 @@
 import { createNode, createEdge } from "../factories/index";
-import { ReachableNodesFixtureBody } from "../types";
+import type { ReachableNodesFixtureBody } from "../types";
 
 export const reachableNodes = {
     general: {

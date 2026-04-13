@@ -18,13 +18,11 @@ describe("pathfinding module", () => {
                 expect(Array.isArray(edges)).toBe(true);
 
                 for(const edge of edges) {
-                    expect(edge).toEqual(
-                        expect.objectContaining({
-                            nodeId: expect.any(String),
-                            edgeId: expect.any(String),
-                            weight: expect.any(Number)
-                        })
-                    );
+                    
+                    expect(typeof edge.nodeId).toBe("string");
+                    expect(typeof edge.edgeId).toBe("string");
+                    expect(typeof edge.weight).toBe("number");
+
                     expect(edge.weight).toBeGreaterThanOrEqual(0);
                     expect(edge.weight).toBeLessThanOrEqual(1);
                 }
@@ -157,12 +155,10 @@ describe("pathfinding module", () => {
                 expect(fixture.shortestPaths).toHaveLength(0);
             }
             else{
-                expect(fixture.shortestPaths).toContainEqual(
-                    expect.objectContaining({
-                        path: result.path,
-                        distance: expect.closeTo(result.distance, 6)
-                    })
-                );
+                const matchingPathResult = fixture.shortestPaths.find(p => JSON.stringify(p.path) === JSON.stringify(result.path));
+
+                expect(matchingPathResult).toBeDefined();
+                expect(matchingPathResult?.distance).toBeCloseTo(result.distance, 6);
             }
         });
     });

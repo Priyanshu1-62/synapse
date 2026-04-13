@@ -1,4 +1,4 @@
-import { GraphEdge, GraphNode, PathResult } from "../../../types/index";
+import type { GraphEdge, GraphNode, PathResult } from "../../../types/index";
 
 export type AdjacencyMap = Map<string, Array<{ nodeId: string; edgeId: string; weight: number }>>;
 
@@ -21,8 +21,8 @@ export interface AllPathsFixtureBody {
     edges: GraphEdge[];
     sourceId: string;
     targetId: string;
-    maxPaths: Number;
-    maxDepth: Number;
+    maxPaths: number;
+    maxDepth: number;
     expectedPaths: PathResult[];
 }
 
